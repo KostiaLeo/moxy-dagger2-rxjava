@@ -1,10 +1,10 @@
 package com.example.viewstatemvp.view
 
 import com.arellomobile.mvp.MvpView
-import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy
+import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 
-@StateStrategyType(AddToEndStrategy::class)
+@StateStrategyType(value = AddToEndSingleStrategy::class)
 interface MainView : MvpView {
-    fun showData(data: List<String>)
+    fun displayData(data: String)
 }

@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
@@ -32,15 +31,18 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
     // Moxy
-    implementation 'com.arello-mobile:moxy-compiler:1.1.1'
+
+    implementation 'com.arello-mobile:moxy:1.5.5'
+    implementation 'com.arello-mobile:moxy-app-compat:1.5.5'
+    kapt 'com.arello-mobile:moxy-compiler:1.5.5'
 
     //  dagger
-    implementation 'com.google.dagger:dagger:2.25.4'
-    implementation 'com.google.dagger:dagger-android-support:2.25.4'
-    kapt 'com.google.dagger:dagger-compiler:2.25.4'
-    // dagger android
-    implementation 'com.google.dagger:dagger-android:2.25.4'
-    kapt 'com.google.dagger:dagger-android-processor:2.25.4'
+//    implementation 'com.google.dagger:dagger:2.25.4'
+//    implementation 'com.google.dagger:dagger-android-support:2.25.4'
+//    kapt 'com.google.dagger:dagger-compiler:2.25.4'
+//    // dagger android
+//    implementation 'com.google.dagger:dagger-android:2.25.4'
+//    kapt 'com.google.dagger:dagger-android-processor:2.25.4'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
