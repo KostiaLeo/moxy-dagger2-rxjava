@@ -2,20 +2,29 @@ package com.example.viewstatemvp.presenter
 
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
-import com.example.viewstatemvp.model.ModelImpl
+import com.example.viewstatemvp.di.App
+import com.example.viewstatemvp.model.Model
 import com.example.viewstatemvp.view.MainView
+import javax.inject.Inject
 
 @InjectViewState
 class MainPresenter : MvpPresenter<MainView>() {
-    private val model = ModelImpl()
+
+    @Inject
+    lateinit var model: Model
+    private lateinit var data: String
 
     init {
-        getData()
+        App.appComponent.inject(this)
+        loadData()
     }
 
-    fun getData() {
-        val data = model.loadData()
+    private fun loadData() {
+        data = model.loadData()
         println("data in presenter: $data")
+    }
+
+    fun getData(){
         viewState.displayData(data)
     }
 }

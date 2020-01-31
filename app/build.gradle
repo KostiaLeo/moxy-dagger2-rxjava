@@ -37,12 +37,12 @@ dependencies {
     kapt 'com.arello-mobile:moxy-compiler:1.5.5'
 
     //  dagger
-//    implementation 'com.google.dagger:dagger:2.25.4'
-//    implementation 'com.google.dagger:dagger-android-support:2.25.4'
-//    kapt 'com.google.dagger:dagger-compiler:2.25.4'
-//    // dagger android
-//    implementation 'com.google.dagger:dagger-android:2.25.4'
-//    kapt 'com.google.dagger:dagger-android-processor:2.25.4'
+    implementation 'com.google.dagger:dagger:2.25.4'
+    implementation 'com.google.dagger:dagger-android-support:2.25.4'
+    kapt 'com.google.dagger:dagger-compiler:2.25.4'
+    // dagger android
+    implementation 'com.google.dagger:dagger-android:2.25.4'
+    kapt 'com.google.dagger:dagger-android-processor:2.25.4'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'

@@ -1,8 +1,10 @@
 package com.example.viewstatemvp.model
 
-class ModelImpl {
+import javax.inject.Inject
 
-    fun loadData(): String {
+class ModelImpl @Inject constructor() : Model {
+
+    override fun loadData(): String {
         return "Data, retrieved by mvp viewState"
     }
 }
