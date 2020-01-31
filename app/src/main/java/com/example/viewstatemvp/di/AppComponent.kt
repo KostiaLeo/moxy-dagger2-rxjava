@@ -5,8 +5,9 @@ import com.example.viewstatemvp.view.MainActivity
 import dagger.Component
 import javax.inject.Singleton
 
-@Component(modules = [ModelImplModule::class, ModelModule::class])
+@Component(modules = [ModelImplModule::class, ModelModule::class, PresenterModule::class])
 @Singleton
 interface AppComponent {
-    fun inject(mainPresenter: MainPresenter)
+    fun providePresenter(): MainPresenter
+    fun inject(mainActivity: MainActivity)
 }
