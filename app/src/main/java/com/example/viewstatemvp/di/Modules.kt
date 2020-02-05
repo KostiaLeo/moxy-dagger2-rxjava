@@ -2,6 +2,7 @@ package com.example.viewstatemvp.di
 
 import com.example.viewstatemvp.model.Model
 import com.example.viewstatemvp.model.ModelImpl
+import com.example.viewstatemvp.model.network.MusicApi
 import com.example.viewstatemvp.presenter.MainPresenter
 import dagger.Binds
 import dagger.Module
@@ -22,9 +23,9 @@ abstract class ModelModule {
     abstract fun bindModel(modelImpl: ModelImpl): Model
 }
 
-@Module
+@Module(includes = [NetworkModule::class])
 class ModelImplModule {
     @Provides
     @Singleton
-    fun provideModelImpl(): ModelImpl = ModelImpl()
+    fun provideModelImpl(api: MusicApi): ModelImpl = ModelImpl(api)
 }
