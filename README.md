@@ -30,4 +30,9 @@ You should do the following steps:
 <h3>Dagger 2</h3>
 Dependency injection applying
 </li>
+<li>
+<h3>Data Binding</h3>
+Advanced dealing with UI by creating Binding adapters
+</li>
+
 </ul>
