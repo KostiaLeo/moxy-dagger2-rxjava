@@ -22,7 +22,9 @@ class MainPresenter @Inject constructor(
         model.loadData()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .map { it.results.asList() }
+            .map {
+                it.results.asList()
+            }
             .subscribe({
                 viewState.displayData(it)
             }, {
