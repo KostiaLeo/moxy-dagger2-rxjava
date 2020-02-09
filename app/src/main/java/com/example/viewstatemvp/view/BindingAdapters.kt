@@ -5,7 +5,7 @@ import androidx.core.net.toUri
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.viewstatemvp.model.network.Results
+import com.example.viewstatemvp.model.Results
 
 @BindingAdapter("url")
 fun bindImage(imageView: ImageView?, url: String) {

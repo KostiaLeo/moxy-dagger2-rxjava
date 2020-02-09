@@ -1,34 +1,58 @@
 package com.example.viewstatemvp.presenter
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
-import com.example.viewstatemvp.model.Model
+import com.example.viewstatemvp.model.LocalSource
+import com.example.viewstatemvp.model.RemoteSource
+import com.example.viewstatemvp.model.Repository
 import com.example.viewstatemvp.view.MainView
+import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 @InjectViewState
 class MainPresenter @Inject constructor(
-    private val model: Model
+    private val repository: Repository
 ) : MvpPresenter<MainView>() {
 
-    // TODO: Rx, DataBinding, Room, DiffUtil
+    private lateinit var repositoryDisposable: Disposable
+    private val tag = "Presenter loading"
 
     @SuppressLint("CheckResult")
     fun loadData() {
-        model.loadData()
+        viewState.showProgress()
+
+        repositoryDisposable = repository.retrieveData()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .map {
-                it.results.asList()
-            }
+            .retry(3)
             .subscribe({
-                viewState.displayData(it)
+                viewState.hideProgress()
+
+                if (it.isEmpty()) {
+                    viewState.showError()
+                    Log.e(tag, "empty list retrieved, need to check internet connection")
+                    return@subscribe
+                } else {
+                    viewState.displayData(it)
+                    repository.saveData(it)
+                }
             }, {
-                Log.e("Presenter loading", "data observing failed", it)
+                viewState.showError()
+                Log.e(tag, "data observing failed", it)
             })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        with(repositoryDisposable) {
+            if (!isDisposed) dispose()
+        }
     }
 }

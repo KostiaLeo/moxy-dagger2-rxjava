@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.viewstatemvp.databinding.ListItemBinding
-import com.example.viewstatemvp.model.network.Results
+import com.example.viewstatemvp.model.Results
 
 class MusicAdapter : ListAdapter<Results, MusicViewHolder>(DiffUtilCallback()) {
 
@@ -25,7 +25,6 @@ class MusicViewHolder(private val binding: ListItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
     fun bind(results: Results) {
-        println(results)
         binding.artist = results
         binding.executePendingBindings()
     }

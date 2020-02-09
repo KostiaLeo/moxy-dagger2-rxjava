@@ -6,7 +6,7 @@
     <data>
         <variable
             name="artist"
-            type="com.example.viewstatemvp.model.network.Results" />
+            type="com.example.viewstatemvp.model.Results" />
     </data>
 
     <RelativeLayout
