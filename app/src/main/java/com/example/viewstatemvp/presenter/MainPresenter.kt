@@ -18,10 +18,13 @@ import javax.inject.Inject
 
 @InjectViewState
 class MainPresenter @Inject constructor(
-    private val repository: Repository
+    private val repository: Repository,
+    private val context: Context
 ) : MvpPresenter<MainView>() {
 
     private lateinit var repositoryDisposable: Disposable
+    private var networkConnectionDisposable: Disposable? = null
+
     private val tag = "Presenter loading"
 
     @SuppressLint("CheckResult")
@@ -38,6 +41,7 @@ class MainPresenter @Inject constructor(
                 if (it.isEmpty()) {
                     viewState.showError()
                     Log.e(tag, "empty list retrieved, need to check internet connection")
+                    networkConnectionDisposable = waitForNetwork()
                     return@subscribe
                 } else {
                     viewState.displayData(it)
@@ -49,10 +53,28 @@ class MainPresenter @Inject constructor(
             })
     }
 
+    @SuppressLint("CheckResult")
+    private fun waitForNetwork(): Disposable =
+        ReactiveNetwork.observeNetworkConnectivity(context)
+            .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                if (it.available()) {
+                    loadData()
+                }
+            }, {
+                Log.e(tag, "failed network waiting", it)
+            })
+
     override fun onDestroy() {
         super.onDestroy()
         with(repositoryDisposable) {
             if (!isDisposed) dispose()
+        }
+        
+        with(networkConnectionDisposable){
+            this?.let {
+                if (!isDisposed) dispose()
+            }
         }
     }
 }

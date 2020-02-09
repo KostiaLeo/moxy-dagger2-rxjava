@@ -22,6 +22,7 @@ class App : Application(), HasAndroidInjector {
         appComponent = DaggerAppComponent.builder()
             .localSourceImplModule(LocalSourceImplModule(applicationContext))
             .networkDispatcherModule(NetworkDispatcherModule(applicationContext))
+            .presenterModule(PresenterModule(applicationContext))
             .build()
         super.onCreate()
     }
