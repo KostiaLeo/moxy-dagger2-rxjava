@@ -31,6 +31,14 @@ You should do the following steps:
 Dependency injection applying
 </li>
 <li>
+<h3>RxJava 2</h3>
+Multithreading calls managing
+<ul>
+<li>Reactive Network: dynamic internet connection observing</li>
+</ul>
+</li>
+
+<li>
 <h3>Data Binding</h3>
 Advanced dealing with UI by creating Binding adapters
 </li>
