@@ -2,6 +2,8 @@ package com.example.viewstatemvp.model.database
 
 import android.annotation.SuppressLint
 import android.util.Log
+import com.example.viewstatemvp.createRxSingle
+import com.example.viewstatemvp.launchBackgroundTask
 import com.example.viewstatemvp.model.LocalSource
 import com.example.viewstatemvp.model.Results
 import io.reactivex.Flowable
@@ -22,18 +24,12 @@ class LocalSourceImpl @Inject constructor(
         dao.retrieveMusicData()
 
     @SuppressLint("CheckResult")
-    override fun refreshData(newData: List<Results>): Disposable {
-
-        val insertSingle= Single.fromCallable {
+    override fun refreshData(newData: List<Results>): Disposable =
+        createRxSingle {
             dao.insertMusic(newData)
-        }
-
-        return insertSingle.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                Log.d(tag, "Inserted and deleted totally ${it.size} items")
-            }, {
-                Log.e(tag, "${it.message}", it)
-            })
-    }
+        }.launchBackgroundTask({
+            Log.d(tag, "Inserted and deleted totally ${it.size} items")
+        }, {
+            Log.e(tag, "${it.message}", it)
+        })
 }
