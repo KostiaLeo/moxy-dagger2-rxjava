@@ -1,18 +1,19 @@
 package com.example.viewstatemvp.view
 
+//import com.example.viewstatemvp.RxLearningKotlin
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import com.arellomobile.mvp.MvpAppCompatActivity
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.viewstatemvp.R
 import com.example.viewstatemvp.databinding.ActivityMainBinding
 import com.example.viewstatemvp.di.App
 import com.example.viewstatemvp.model.Results
 import com.example.viewstatemvp.presenter.MainPresenter
 import com.google.android.material.snackbar.Snackbar
+import moxy.MvpAppCompatActivity
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
 import javax.inject.Inject
 
 class MainActivity : MvpAppCompatActivity(), MainView {
@@ -33,6 +34,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         binding.recycler.adapter = MusicAdapter()
 
         presenter.loadData()
+        //RxLearningKotlin().launch()
     }
 
     override fun displayData(musicData: List<Results>) {
@@ -49,7 +51,15 @@ class MainActivity : MvpAppCompatActivity(), MainView {
     }
 
     override fun showError() {
-        hideProgress()
-        Snackbar.make(this.binding.root, "Check internet connection, failed loading", Snackbar.LENGTH_LONG).show()
+        Snackbar.make(
+            this.binding.root,
+            "Check internet connection, failed loading",
+            Snackbar.LENGTH_LONG
+        ).show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        presenter.onDestroy()
     }
 }

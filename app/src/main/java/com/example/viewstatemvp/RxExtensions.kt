@@ -1,3 +1,4 @@
+@file:JvmName("rx")
 package com.example.viewstatemvp
 
 import android.annotation.SuppressLint
@@ -9,9 +10,9 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
 @SuppressLint("CheckResult")
-fun <T> Single<T>.launchBackgroundTask(
-    blockOnNext: (t: T) -> Unit,
-    blockOnError: (throwable: Throwable) -> Unit
+inline fun <T> Single<T>.launchBackgroundTask(
+    crossinline blockOnNext: (t: T) -> Unit,
+    crossinline blockOnError: (throwable: Throwable) -> Unit
 ): Disposable {
     return this.subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
@@ -24,9 +25,9 @@ fun <T> Single<T>.launchBackgroundTask(
 }
 
 @SuppressLint("CheckResult")
-fun <T> Observable<T>.launchBackgroundTask(
-    blockOnNext: (t: T) -> Unit,
-    blockOnError: (throwable: Throwable) -> Unit
+inline fun <T> Observable<T>.launchBackgroundTask(
+    crossinline blockOnNext: (t: T) -> Unit,
+    crossinline blockOnError: (throwable: Throwable) -> Unit
 ): Disposable {
     return this.subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
@@ -38,7 +39,7 @@ fun <T> Observable<T>.launchBackgroundTask(
         })
 }
 
-fun <T> createRxSingle(sourceBlock: () -> T): Single<T> =
+inline fun <T> createRxSingle(crossinline sourceBlock: () -> T): Single<T> =
     Single.fromCallable { sourceBlock() }
 
 //sealed class ResponseState {

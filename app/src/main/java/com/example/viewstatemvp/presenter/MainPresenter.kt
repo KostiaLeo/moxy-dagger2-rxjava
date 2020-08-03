@@ -3,57 +3,83 @@ package com.example.viewstatemvp.presenter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
-import com.arellomobile.mvp.InjectViewState
-import com.arellomobile.mvp.MvpPresenter
-import com.example.viewstatemvp.launchBackgroundTask
-import com.example.viewstatemvp.model.LocalSource
-import com.example.viewstatemvp.model.RemoteSource
 import com.example.viewstatemvp.model.Repository
 import com.example.viewstatemvp.view.MainView
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
-import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import moxy.InjectViewState
+import moxy.MvpPresenter
 import javax.inject.Inject
+import javax.inject.Named
 
 @InjectViewState
 class MainPresenter @Inject constructor(
     private val repository: Repository,
-    private val context: Context
+    private val context: Context,
+    @Named("WorkScheduler") private val workScheduler: Scheduler,
+    @Named("ResultScheduler") private val resultScheduler: Scheduler
 ) : MvpPresenter<MainView>() {
 
     private val compositeDisposable = CompositeDisposable()
+    private var reactiveNetworkDisposable: Disposable? = null
 
     private val tag = "Presenter loading"
 
     @SuppressLint("CheckResult")
     fun loadData() {
         viewState.showProgress()
+        reactiveNetworkDisposable?.dispose()
         compositeDisposable.add(
-            repository.retrieveData().launchBackgroundTask({
-                viewState.hideProgress()
+            repository.retrieveData()
+                .subscribeOn(workScheduler)
+                .doOnSuccess {
+                    if (it.isNotEmpty()) {
+                        compositeDisposable.add(repository.saveData(it))
+                    }
+                }
+                .observeOn(resultScheduler)
+                .subscribe({ musicData ->
+                    viewState.hideProgress()
 
-                if (it.isEmpty()) {
+                    if (musicData.isNotEmpty()) {
+                        viewState.displayData(musicData)
+                    } else {
+//                        Log.e(tag, "empty list retrieved, need to check internet connection")
+                        if (reactiveNetworkDisposable == null) {
+                            reactiveNetworkDisposable = waitForNetwork().also {
+                                compositeDisposable.add(it)
+                                viewState.showError()
+                            }
+                        }
+                    }
+                }, {
+                    viewState.hideProgress()
                     viewState.showError()
-                    Log.e(tag, "empty list retrieved, need to check internet connection")
-                    compositeDisposable.add(
-                        waitForNetwork()
-                    )
-                    return@launchBackgroundTask
-                } else {
-                    viewState.displayData(it)
-                    compositeDisposable.add(
-                        repository.saveData(it)
-                    )
+                    Log.e(tag, "data observing failed", it)
+                })
+        )
+    }
+
+    @SuppressLint("CheckResult")
+    fun waitForNetwork(): Disposable =
+        repository.connectivityObservable(context)
+            .subscribeOn(workScheduler)
+            .observeOn(resultScheduler)
+            .subscribe({
+                if (it.available()) {
+                    loadData()
                 }
             }, {
-                viewState.showError()
-                Log.e(tag, "data observing failed", it)
+                Log.e(tag, "failed network waiting", it)
             })
-        )
+
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.clear()
+    }
+}
 
 //        repositoryDisposable = repository.retrieveData()
 //            .subscribeOn(Schedulers.io())
@@ -75,21 +101,3 @@ class MainPresenter @Inject constructor(
 //                viewState.showError()
 //                Log.e(tag, "data observing failed", it)
 //            })
-    }
-
-    @SuppressLint("CheckResult")
-    private fun waitForNetwork(): Disposable =
-        ReactiveNetwork.observeNetworkConnectivity(context)
-            .launchBackgroundTask({
-                if (it.available()) {
-                    loadData()
-                }
-            }, {
-                Log.e(tag, "failed network waiting", it)
-            })
-
-    override fun onDestroy() {
-        super.onDestroy()
-        compositeDisposable.clear()
-    }
-}

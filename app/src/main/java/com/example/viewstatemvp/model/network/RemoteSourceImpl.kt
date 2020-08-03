@@ -11,6 +11,6 @@ class RemoteSourceImpl @Inject constructor(
 ) : RemoteSource {
 
     override fun retrieveData(): Single<List<Results>> {
-        return api.getDataObservable().map { it.results.asList() }
+        return api.getDataObservable().map { it.results }
     }
 }

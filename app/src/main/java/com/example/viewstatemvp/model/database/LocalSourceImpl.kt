@@ -28,7 +28,7 @@ class LocalSourceImpl @Inject constructor(
         createRxSingle {
             dao.insertMusic(newData)
         }.launchBackgroundTask({
-            Log.d(tag, "Inserted and deleted totally ${it.size} items")
+            Log.d(tag, "Inserted totally ${it.size} items")
         }, {
             Log.e(tag, "${it.message}", it)
         })
