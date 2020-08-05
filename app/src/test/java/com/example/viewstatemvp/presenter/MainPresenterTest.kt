@@ -16,6 +16,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.*
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
@@ -67,16 +68,41 @@ class MainPresenterTest {
         verify(viewState, never()).showError()
         verify(viewState).displayData(mockedResultList)
         verify(repository).saveData(mockedResultList)
+
+        verifyNoMoreInteractions(viewState)
+    }
+
+    @Test
+    fun loadDataSuccesOrder() {
+        `when`(repository.retrieveData()).thenReturn(Single.just(mockedResultList))
+        `when`(repository.saveData(mockedResultList)).thenReturn(disposable)
+        presenter.loadData()
+        viewState.showProgress()
+        viewState.hideProgress()
+        viewState.displayData(mockedResultList)
+        verify(viewState, never()).showError()
+
+        val saveDescription = "app gotta save the data on successful fetching in order to use it in unexpected cases"
+        verify(repository, description(saveDescription)).saveData(mockedResultList)
+
+        val inOrder = inOrder(viewState)
+        inOrder.verify(viewState).showProgress()
+        inOrder.verify(viewState).hideProgress()
+        inOrder.verify(viewState).displayData(anyList())
+
+        val inOrderSeveral = inOrder(viewState, repository)
+        inOrderSeveral.verify(viewState).showProgress()
+        inOrderSeveral.verify(repository).saveData(anyList())
+        inOrderSeveral.verify(viewState).hideProgress()
+        inOrderSeveral.verify(viewState).displayData(anyList())
     }
 
     @Test
     fun loadEmptyData() {
-        `when`(repository.retrieveData()).thenReturn(Single.just(emptyResultList))
+        `when`(repository.retrieveData()).thenReturn(Single.just(emptyResultList), Single.just(mockedResultList))
         `when`(repository.connectivityObservable(context)).thenReturn(
             Observable.just(
-                Connectivity.state(
-                    NetworkInfo.State.CONNECTED
-                ).build()
+                Connectivity.available(true).build()
             )
         )
         presenter.loadData()
@@ -84,18 +110,41 @@ class MainPresenterTest {
         // verify(mock, times(10)).someMethod();
         // verify(mock, atLeastOnce()).someMethod();
         verify(repository).connectivityObservable(context)
-        verify(viewState).showProgress()
-        verify(viewState).hideProgress()
-        verify(viewState).showError()
+        verify(viewState, times(2)).showProgress()
+        verify(viewState, times(2)).hideProgress()
+        verify(viewState, times(2)).showError()
+
+        verify(repository, times(2)).retrieveData()
+        verify(repository, atMost(1)).saveData(anyList())
+
     }
 
     @Test
     fun loadDataFailed() {
+
+//        1) you can chain multiple return values which be returned in the mentioned order
+//        2) thenThrow - as thenReturn, but throw Exception on the method calling
+//        `when`(mockObject.add(any()))
+//            .thenReturn(true, false)
+//            .thenThrow(IllegalArgumentException())
+
         `when`(repository.retrieveData()).thenReturn(Single.error(IllegalStateException()))
+
+//        it's possible to create and instruct mock object in 1 line
+        val repo = `when`(mock(Repository::class.java).retrieveData())
+                .thenReturn(Single.error(IllegalStateException()))
+                .getMock<Repository>()
+
+        // anyList(), anyInt(), any(AnyClass::class.java)
+        // it's possible to use matchers in instructing mocks:
+        // when(mockObject.addAll(anyList())).thenReturn(true);
+        // when(mockObject.add(startsWith("elem"))).thenReturn(true);
+
         presenter.loadData()
-        verify(viewState, never()).displayData(mockedResultList)
-        verify(viewState, never()).displayData(emptyResultList)
-        verify(repository, never()).saveData(ArgumentMatchers.anyList())
+        verify(viewState, never()).displayData(anyList())
+        verify(viewState, never().description("app mustn't show any data if an error occurred"))
+            .displayData(anyList())
+        verify(repo, never()).saveData(anyList())
         verify(viewState).showProgress()
         verify(viewState).hideProgress()
         verify(viewState).showError()
