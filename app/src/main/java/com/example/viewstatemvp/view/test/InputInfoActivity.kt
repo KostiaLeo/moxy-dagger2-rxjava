@@ -1,9 +1,7 @@
-package com.example.viewstatemvp.view
+package com.example.viewstatemvp.view.test
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import com.example.viewstatemvp.R
 import kotlinx.android.synthetic.main.activity_input_info.*
 

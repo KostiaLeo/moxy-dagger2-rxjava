@@ -65,7 +65,7 @@ class MainActivityTest {
                 ).atPosition(2)
             )
         onView(withId(R.id.clicked_tv)).check(matches(withText(containsString("Sayonara Boy"))))
-
+    
         IdlingRegistry.getInstance().unregister(idlingResource)
     }
 
