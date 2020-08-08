@@ -8,7 +8,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.viewstatemvp.databinding.ListItemBinding
 import com.example.viewstatemvp.model.Results
 
-class MusicAdapter : ListAdapter<Results, MusicViewHolder>(DiffUtilCallback()) {
+class MusicAdapter(private val itemClickListener: (Results) -> Unit) : ListAdapter<Results, MusicViewHolder>(DiffUtilCallback()) {
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MusicViewHolder =
         MusicViewHolder(
@@ -18,6 +22,9 @@ class MusicAdapter : ListAdapter<Results, MusicViewHolder>(DiffUtilCallback()) {
     override fun onBindViewHolder(holder: MusicViewHolder, position: Int) {
         val item = getItem(position)
         holder.bind(item)
+        holder.itemView.setOnClickListener {
+            itemClickListener(getItem(position))
+        }
     }
 }
 

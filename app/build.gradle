@@ -91,8 +91,12 @@ dependencies {
     androidTestImplementation "androidx.room:room-testing:$rootProject.roomVersion"
     implementation 'android.arch.persistence.room:rxjava2:1.1.1'
     implementation 'androidx.room:room-rxjava2:2.2.3'
+
+    implementation 'com.android.support.test.espresso:espresso-idling-resource:3.2.0'
+    implementation 'com.android.support.test.espresso:espresso-contrib:3.2.0'
     testImplementation 'org.mockito:mockito-core:2.8.47'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    implementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'androidx.test:rules:1.1.1'
 }

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.test.espresso.idling.CountingIdlingResource
 import com.example.viewstatemvp.R
 import com.example.viewstatemvp.databinding.ActivityMainBinding
 import com.example.viewstatemvp.di.App
@@ -27,11 +28,17 @@ class MainActivity : MvpAppCompatActivity(), MainView {
     @ProvidePresenter
     fun providePresenter(): MainPresenter = presenter
 
+    val idlingResource = CountingIdlingResource("Data loading")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         App.appComponent.inject(this)
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this as AppCompatActivity, R.layout.activity_main)
-        binding.recycler.adapter = MusicAdapter()
+        binding.recycler.adapter = MusicAdapter {
+            binding.clickedTv.text = it.name
+        }
+
+        presenter.idlingResource = idlingResource
 
         presenter.loadData()
         //RxLearningKotlin().launch()

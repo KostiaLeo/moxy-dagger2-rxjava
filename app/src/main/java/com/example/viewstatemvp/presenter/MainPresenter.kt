@@ -3,6 +3,7 @@ package com.example.viewstatemvp.presenter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
+import androidx.test.espresso.idling.CountingIdlingResource
 import com.example.viewstatemvp.model.Repository
 import com.example.viewstatemvp.view.MainView
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
@@ -11,8 +12,10 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import moxy.InjectViewState
 import moxy.MvpPresenter
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Named
+import kotlin.properties.Delegates
 
 @InjectViewState
 class MainPresenter @Inject constructor(
@@ -27,8 +30,12 @@ class MainPresenter @Inject constructor(
 
     private val tag = "Presenter loading"
 
+    var idlingResource by Delegates.notNull<CountingIdlingResource>()
+
+
     @SuppressLint("CheckResult")
     fun loadData() {
+        idlingResource.increment()
         viewState.showProgress()
         reactiveNetworkDisposable?.dispose()
         compositeDisposable.add(
@@ -45,6 +52,7 @@ class MainPresenter @Inject constructor(
 
                     if (musicData.isNotEmpty()) {
                         viewState.displayData(musicData)
+                        idlingResource.decrement()
                     } else {
 //                        Log.e(tag, "empty list retrieved, need to check internet connection")
                         if (reactiveNetworkDisposable == null) {
@@ -57,6 +65,7 @@ class MainPresenter @Inject constructor(
                 }, {
                     viewState.hideProgress()
                     viewState.showError()
+                    idlingResource.decrement()
                     Log.e(tag, "data observing failed", it)
                 })
         )
@@ -67,11 +76,13 @@ class MainPresenter @Inject constructor(
         repository.connectivityObservable(context)
             .subscribeOn(workScheduler)
             .observeOn(resultScheduler)
+            .timeout(10, TimeUnit.SECONDS)
             .subscribe({
                 if (it.available()) {
                     loadData()
                 }
             }, {
+                idlingResource.decrement()
                 Log.e(tag, "failed network waiting", it)
             })
 
