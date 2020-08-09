@@ -13,6 +13,11 @@ import androidx.test.rule.ActivityTestRule
 import com.example.viewstatemvp.R
 import com.example.viewstatemvp.view.test.SecondActivity
 import org.hamcrest.CoreMatchers.*
+import org.junit.After
+import org.junit.Before
+import org.junit.runner.Description
+import org.junit.runners.model.Statement
+import java.text.SimpleDateFormat
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
@@ -37,6 +42,14 @@ class SecondActivityCustomRuleTest {
     @get:Rule
     val activityRule =
         SecondActivityTestRule()
+
+    @Before
+    fun setUp() {
+    }
+
+    @After
+    fun tearDown() {
+    }
 
     @Test
     fun testWithCustomRule() {

@@ -30,12 +30,13 @@ class MainPresenter @Inject constructor(
 
     private val tag = "Presenter loading"
 
-    var idlingResource by Delegates.notNull<CountingIdlingResource>()
+    var idlingResource: CountingIdlingResource? = null
 
 
     @SuppressLint("CheckResult")
     fun loadData() {
-        idlingResource.increment()
+        // uncomment for UI testing
+        idlingResource?.increment()
         viewState.showProgress()
         reactiveNetworkDisposable?.dispose()
         compositeDisposable.add(
@@ -52,7 +53,8 @@ class MainPresenter @Inject constructor(
 
                     if (musicData.isNotEmpty()) {
                         viewState.displayData(musicData)
-                        idlingResource.decrement()
+                        // uncomment for UI testing
+                        idlingResource?.decrement()
                     } else {
 //                        Log.e(tag, "empty list retrieved, need to check internet connection")
                         if (reactiveNetworkDisposable == null) {
@@ -65,7 +67,8 @@ class MainPresenter @Inject constructor(
                 }, {
                     viewState.hideProgress()
                     viewState.showError()
-                    idlingResource.decrement()
+                    // uncomment for UI testing
+                    idlingResource?.decrement()
                     Log.e(tag, "data observing failed", it)
                 })
         )
@@ -82,7 +85,8 @@ class MainPresenter @Inject constructor(
                     loadData()
                 }
             }, {
-                idlingResource.decrement()
+                // uncomment for UI testing
+                idlingResource?.decrement()
                 Log.e(tag, "failed network waiting", it)
             })
 

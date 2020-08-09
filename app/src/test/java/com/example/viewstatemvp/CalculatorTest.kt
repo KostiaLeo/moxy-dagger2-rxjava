@@ -1,5 +1,6 @@
 package com.example.viewstatemvp
 
+import android.util.Log
 import com.example.viewstatemvp.MigosMatcher.Companion.isMigos
 import com.example.viewstatemvp.presenter.MainPresenter
 import org.junit.After
@@ -10,22 +11,29 @@ import org.hamcrest.CoreMatchers.*
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
+import org.junit.Rule
 import kotlin.properties.Delegates
 
 class CalculatorTest {
-    var calculator by Delegates.notNull<Calculator>()
+    private var calculator by Delegates.notNull<Calculator>()
+
+    @get:Rule
+    val rule = CustomRule()
 
     @Before
     fun setUp() {
         calculator = Calculator()
+        println("setUp")
     }
 
     @After
     fun tearDown() {
+        println("tearDown")
     }
 
     @Test
     fun rapTest() {
+        println("test start")
         val s1 = String("Migos".toCharArray())
         val s2 = String("Migos".toCharArray())
         assertThat(s1, instanceOf(String::class.java))
@@ -40,6 +48,7 @@ class CalculatorTest {
         assertThat(rap, hasItem("Takeoff"))
         assertThat(rap, hasItems(containsString("off"), startsWith("T")))
         assertThat("Travis Scott", either(isMigos()).or(startsWith("Travis")))
+        println("test end")
     }
 
     @Test
