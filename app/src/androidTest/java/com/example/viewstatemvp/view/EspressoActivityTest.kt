@@ -1,4 +1,4 @@
-package com.example.viewstatemvp
+package com.example.viewstatemvp.view
 
 
 import androidx.test.espresso.Espresso.*
@@ -12,6 +12,7 @@ import org.junit.runner.RunWith
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
+import com.example.viewstatemvp.R
 import com.example.viewstatemvp.view.test.EspressoActivity
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.not
@@ -27,14 +28,18 @@ class EspressoActivityTest {
     fun textOnOneClick() {
         onView(withId(R.id.click_test_btn)).perform(click())
 
-        onView(withId(R.id.tv_display)).check(matches(withText(R.string.travis)))
+        onView(withId(R.id.tv_display)).check(matches(withText(
+            R.string.travis
+        )))
     }
 
     @Test
     fun textOnTwoClicks() {
         onView(withId(R.id.click_test_btn)).perform(click(), click())
 
-        onView(withId(R.id.tv_display)).check(matches(withText(R.string.for_real)))
+        onView(withId(R.id.tv_display)).check(matches(withText(
+            R.string.for_real
+        )))
     }
 
     @Test
