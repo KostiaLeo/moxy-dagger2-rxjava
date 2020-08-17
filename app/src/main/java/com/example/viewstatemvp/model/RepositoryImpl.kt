@@ -27,7 +27,7 @@ class RepositoryImpl @Inject constructor(
         return localSource.refreshData(newData)
     }
 
-    override fun connectivityObservable(context: Context): Observable<Connectivity> {
+    override fun getConnectivityObservable(context: Context): Observable<Connectivity> {
         return ReactiveNetwork.observeNetworkConnectivity(context)
     }
 }

@@ -6,7 +6,6 @@ import android.util.Log
 import androidx.test.espresso.idling.CountingIdlingResource
 import com.example.viewstatemvp.model.Repository
 import com.example.viewstatemvp.view.MainView
-import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -15,7 +14,6 @@ import moxy.MvpPresenter
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Named
-import kotlin.properties.Delegates
 
 @InjectViewState
 class MainPresenter @Inject constructor(
@@ -76,7 +74,7 @@ class MainPresenter @Inject constructor(
 
     @SuppressLint("CheckResult")
     fun waitForNetwork(): Disposable =
-        repository.connectivityObservable(context)
+        repository.getConnectivityObservable(context)
             .subscribeOn(workScheduler)
             .observeOn(resultScheduler)
             .timeout(10, TimeUnit.SECONDS)

@@ -19,5 +19,5 @@ interface RemoteSource: Source
 interface Repository {
     fun retrieveData(): Single<List<Results>>
     fun saveData(newData: List<Results>): Disposable
-    fun connectivityObservable(context: Context): Observable<Connectivity>
+    fun getConnectivityObservable(context: Context): Observable<Connectivity>
 }

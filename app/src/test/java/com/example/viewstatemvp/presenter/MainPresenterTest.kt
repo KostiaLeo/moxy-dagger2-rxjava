@@ -1,7 +1,6 @@
 package com.example.viewstatemvp.presenter
 
 import android.content.Context
-import androidx.test.espresso.idling.CountingIdlingResource
 import com.example.viewstatemvp.model.Currency
 import com.example.viewstatemvp.model.Image
 import com.example.viewstatemvp.model.Repository
@@ -12,7 +11,6 @@ import com.github.pwittchen.reactivenetwork.library.rx2.Connectivity
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.Disposable
-import io.reactivex.exceptions.CompositeException
 import io.reactivex.schedulers.Schedulers
 import org.junit.After
 import org.junit.Before
@@ -114,16 +112,16 @@ class MainPresenterTest {
             Single.just(emptyResultList),
             Single.just(mockedResultList)
         )
-        `when`(repository.connectivityObservable(context)).thenReturn(
+        `when`(repository.getConnectivityObservable(context)).thenReturn(
             Observable.just(
                 Connectivity.available(true).build()
             )
         )
         presenter.loadData()
-        // verify(mock).someMethod();
+        // verify(mock).someMethod(); 
         // verify(mock, times(10)).someMethod();
         // verify(mock, atLeastOnce()).someMethod();
-        verify(repository).connectivityObservable(context)
+        verify(repository).getConnectivityObservable(context)
         verify(customViewState, times(2)).showProgress()
         verify(customViewState, times(2)).hideProgress()
         verify(customViewState, times(2)).showError()
