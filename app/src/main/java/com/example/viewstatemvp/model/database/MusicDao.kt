@@ -11,7 +11,10 @@ interface MusicDao {
     fun retrieveMusicData(): Single<List<Results>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertMusic(musicData: List<Results>): List<Long>
+    fun insertMusic(musicData: List<Results>): Single<List<Long>>
+
+    @Query("DELETE FROM music_table")
+    fun deleteAll(): Single<Int>
 }
 
 @Database(entities = [Results::class], version = 1, exportSchema = false)

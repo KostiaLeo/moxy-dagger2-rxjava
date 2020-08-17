@@ -25,11 +25,10 @@ class LocalSourceImpl @Inject constructor(
 
     @SuppressLint("CheckResult")
     override fun refreshData(newData: List<Results>): Disposable =
-        createRxSingle {
-            dao.insertMusic(newData)
-        }.launchBackgroundTask({
-            Log.d(tag, "Inserted totally ${it.size} items")
-        }, {
-            Log.e(tag, "${it.message}", it)
-        })
+        dao.insertMusic(newData)
+            .launchBackgroundTask({
+                Log.d(tag, "Inserted totally ${it.size} items")
+            }, {
+                Log.e(tag, "${it.message}", it)
+            })
 }
